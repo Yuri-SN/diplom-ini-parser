@@ -35,6 +35,24 @@ void IniParser::parse(const std::string& fileName) {
       currentSection = trim(currentSection);
 
       std::cout << currentSection << std::endl;
+    } else {
+      size_t equalsPosition = line.find('=');
+
+      if (equalsPosition == std::string::npos) {
+        throw std::runtime_error("Syntax error on line " + std::to_string(lineNumber) + ": missing '='.");
+      }
+
+      std::string variable = trim(line.substr(0, equalsPosition));
+      std::string value = trim(line.substr(equalsPosition + 1));
+
+      if (variable.empty()) {
+        throw std::runtime_error("Syntax error in file on line " + std::to_string(lineNumber) +
+                                 ": variable name is empty.");
+      }
+
+      m_data[currentSection][variable] = value;
+
+      std::cout << currentSection << " : " << variable << " : " << value << std::endl;
     }
   }
 
@@ -45,11 +63,24 @@ void IniParser::parse(const std::string& fileName) {
 
 std::string IniParser::trim(const std::string& str) {
   const char* whiteSpace = " \t\n\r";
+  const char commentChar = ';';
+
   size_t first = str.find_first_not_of(whiteSpace);
   if (first == std::string::npos) {
     return "";
   }
-  size_t last = str.find_last_not_of(whiteSpace);
+
+  // Находим позицию символа комментария
+  size_t commentPosition = str.find(commentChar, first);
+  size_t last;
+
+  if (commentPosition != std::string::npos) {
+    // Если комментарий найден, обрезаем строку до комментария
+    last = str.find_last_not_of(whiteSpace, commentPosition - 1);
+  } else {
+    // Если комментарий не найден, обрезаем пробелы с конца
+    last = str.find_last_not_of(whiteSpace);
+  }
 
   return str.substr(first, last - first + 1);
 }
