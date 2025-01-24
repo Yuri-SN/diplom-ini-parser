@@ -19,8 +19,8 @@ int main() {
     auto value4 = parser.getValue<std::string>("Section2.var2");
     std::cout << "Section2.var2 = " << value4 << std::endl;
 
-    // auto value5 = parser.getValue<std::string>("Section4.Mode");
-    // std::cout << "Section4.Mode = '" << value5 << "'" << std::endl;
+    auto value5 = parser.getValue<std::string>("Section4.Mode");
+    std::cout << "Section4.Mode = '" << value5 << "'" << std::endl;
 
     // Exception !!!
     // auto value6 = parser.getValue<int>("Section3.var1");
