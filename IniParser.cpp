@@ -1,6 +1,7 @@
 #include "IniParser.h"
 
 #include <fstream>
+#include <iostream>
 
 IniParser::IniParser(const std::string& fileName) {
   parse(fileName);
@@ -28,6 +29,13 @@ void IniParser::parse(const std::string& fileName) {
     }
 
     isFileHasContent = true;  // Если дошли сюда, значит, в файле есть содержимое
+
+    if (line[0] == '[' && line[line.size() - 1] == ']') {
+      currentSection = line.substr(1, line.size() - 2);
+      currentSection = trim(currentSection);
+
+      std::cout << currentSection << std::endl;
+    }
   }
 
   if (!isFileHasContent) {
