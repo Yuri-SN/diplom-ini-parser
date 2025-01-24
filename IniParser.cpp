@@ -38,9 +38,10 @@ T IniParser::getValue(const std::string& key) {
 // Private
 
 // Явное инстанцирование шаблонной функции для нужных типов
+// Чтобы не писать реализацию в .h файле
 template std::string IniParser::getValue<std::string>(const std::string& key);
-// template int IniParser::getValue<int>(const std::string& key);
-// template double IniParser::getValue<double>(const std::string& key);
+template int IniParser::getValue<int>(const std::string& key);
+template double IniParser::getValue<double>(const std::string& key);
 
 void IniParser::parse(const std::string& fileName) {
   std::ifstream file(fileName);
