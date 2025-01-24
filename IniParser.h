@@ -3,10 +3,12 @@
 #include <map>
 #include <string>
 
-class ini_parser {
+class IniParser {
 public:
-  ini_parser(const std::string& filename);
+  IniParser(const std::string& fileName);
 
 private:
+  void parse(const std::string& fileName);
+
   std::map<std::string, std::map<std::string, std::string>> m_data;
 };

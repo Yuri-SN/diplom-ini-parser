@@ -7,8 +7,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(diplom-ini-parser
   main.cpp
-  ini_parser.h
-  ini_parser.cpp
+  IniParser.h
+  IniParser.cpp
 )
 
 include(GNUInstallDirs)

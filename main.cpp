@@ -1,11 +1,11 @@
 #include <iostream>
 #include <ostream>
 
-#include "ini_parser.h"
+#include "IniParser.h"
 
 int main() {
   try {
-    ini_parser parser("example.ini");
+    IniParser parser("example.ini");
   } catch (const std::exception& e) {
     std::cerr << "Error: " << e.what() << std::endl;
   }
