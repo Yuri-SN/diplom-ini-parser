@@ -1,49 +1,9 @@
 #include "IniParser.h"
 
 #include <fstream>
-#include <sstream>
+#include <stdexcept>
 
 IniParser::IniParser(const std::string& fileName) {
-  parse(fileName);
-}
-
-template <typename T>
-T IniParser::getValue(const std::string& key) {
-  size_t dotPosition = key.find('.');
-  if (dotPosition == std::string::npos) {
-    throw std::invalid_argument("Invalid key format. Expected 'section.key'.");
-  }
-
-  std::string section = key.substr(0, dotPosition);
-  std::string variable = key.substr(dotPosition + 1);
-
-  if (m_data.find(section) == m_data.end() || m_data[section].find(variable) == m_data[section].end()) {
-    std::string message = "Key '" + key + "' not found.";
-
-    if (m_data.find(section) != m_data.end()) {
-      message += " Available variables in section '" + section + "': ";
-      for (const auto& var : m_data[section]) {
-        message += var.first + ", ";
-      }
-      message = message.substr(0, message.size() - 2);  // Remove trailing comma and space
-    }
-    throw std::out_of_range(message);
-  }
-
-  std::string value = m_data[section][variable];
-
-  return convert<T>(value);
-}
-
-// Private
-
-// Явное инстанцирование шаблонной функции для нужных типов
-// Чтобы не писать реализацию в .h файле
-template std::string IniParser::getValue<std::string>(const std::string& key);
-template int IniParser::getValue<int>(const std::string& key);
-template double IniParser::getValue<double>(const std::string& key);
-
-void IniParser::parse(const std::string& fileName) {
   std::ifstream file(fileName);
   if (!file.is_open()) {
     throw std::runtime_error("Could not open file: " + fileName);
@@ -62,12 +22,12 @@ void IniParser::parse(const std::string& fileName) {
       continue;  // Пропускаем пустые строки и комментарии
     }
 
-    isFileHasContent = true;  // Если дошли сюда, значит, в файле есть содержимое
+    isFileHasContent = true;  // В этом месте понятно, что в файле есть данные
 
-    if (line[0] == '[' && line[line.size() - 1] == ']') {
+    if (line[0] == '[' && line[line.size() - 1] == ']') {  // Если строка - это объявлении секции
       currentSection = line.substr(1, line.size() - 2);
       currentSection = trim(currentSection);
-    } else {
+    } else {  // Строка - это ключ со значением
       size_t equalsPosition = line.find('=');
 
       if (equalsPosition == std::string::npos) {
@@ -91,9 +51,11 @@ void IniParser::parse(const std::string& fileName) {
   }
 }
 
+// Private
+
 std::string IniParser::trim(const std::string& str) {
-  const char* whiteSpace = " \t\n\r";
-  const char commentChar = ';';
+  const char* whiteSpace{" \t\n\r"};
+  const char commentChar{';'};
 
   size_t first = str.find_first_not_of(whiteSpace);
   if (first == std::string::npos) {
@@ -113,20 +75,4 @@ std::string IniParser::trim(const std::string& str) {
   }
 
   return str.substr(first, last - first + 1);
-}
-
-template <typename T>
-T IniParser::convert(const std::string& value) {
-  std::istringstream iss(value);
-
-  T result;
-  if (!(iss >> result)) {
-    throw std::runtime_error("Conversion error: cannot convert '" + value + "' to requested type.");
-  }
-  return result;
-}
-
-template <>
-std::string IniParser::convert<std::string>(const std::string& value) {
-  return value;
 }

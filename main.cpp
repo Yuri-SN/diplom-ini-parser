@@ -25,6 +25,9 @@ int main() {
     auto value6 = parser.getValue<std::string>("Section4.Mode");
     std::cout << "Section4.Mode = '" << value6 << "'" << std::endl;
 
+    bool boolValue = parser.getValue<bool>("Section2.BoolVar");
+    std::cout << "Section2.BoolVar = '" << boolValue << "'" << std::endl;
+
     // Exception !!!
     auto value7 = parser.getValue<int>("Section3.var1");
     std::cout << "Section3.var1 = '" << value7 << "'" << std::endl;
